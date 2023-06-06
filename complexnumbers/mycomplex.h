@@ -24,8 +24,7 @@ public:
 
     [[maybe_unused]] Complex conjugate()
     {
-        mImag = -mImag;
-        return *this;
+        return {mReal, -mImag};
     }
 
     //getter
@@ -35,6 +34,7 @@ public:
     [[maybe_unused]] auto getImag(){
         return mImag;
     }
+
     //operations
     [[maybe_unused]] Complex add(const Complex& z)
     {
@@ -50,23 +50,21 @@ public:
     }
     [[maybe_unused]] Complex squared()
     {
-        // Needed because reference to (*this).mReal is passed to temp in multiply member function
-        Complex<T> temp{ *this };
-        return (*this).multiply(temp);
+        return (*this).multiply(*this);
     }
     [[maybe_unused]] Complex divide(const Complex& z)
     {
         assert(!isZero(z.mReal) && !isZero(z.mImag) && "Division by Zero Error");
-        //auto temp{ mReal };
         auto denominator { z.mReal*z.mReal + z.mImag*z.mImag };
 
         return {(mReal*z.mReal + mImag*z.mImag) / denominator, (mImag*z.mReal - mReal*z.mImag) / denominator};
     }
     [[maybe_unused]] Complex reciprocal() {
         Complex numerator{1, 0};
-        Complex denominator{*this};
-        return numerator.divide(denominator);
+
+        return numerator.divide(*this);
     }
+
     // print format
     [[maybe_unused]] void print()
     {
@@ -75,7 +73,6 @@ public:
         else
             std::cout << mReal << "-j" << -mImag << '\n';
     }
-
 };
 template<typename T>
 Complex(T, T) -> Complex<T>;// For class template argument deduction
